@@ -288,7 +288,46 @@
 
     }
 
-  </script>
+  </
+    <script>
+async function generateImage() {
+  const prompt = document.getElementById("prompt").value.trim();
+  const preview = document.getElementById("preview");
 
-</body>
-</html>
+  if (!prompt) {
+    preview.innerHTML = "<p>पहले prompt लिखो।</p>";
+    return;
+  }
+
+  preview.innerHTML = "<p>✨ Image बन रही है...</p>";
+
+  try {
+    const response = await fetch("/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: prompt
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Generation failed");
+    }
+
+    const blob = await response.blob();
+    const imageUrl = URL.createObjectURL(blob);
+
+    preview.innerHTML = `
+      <img
+        src="${imageUrl}"
+        style="width:100%;max-width:600px;border-radius:16px;"
+      >
+    `;
+  } catch (error) {
+    preview.innerHTML =
+      "<p>❌ Image नहीं बन पाई। फिर से कोशिश करो।</p>";
+  }
+}
+</script>
